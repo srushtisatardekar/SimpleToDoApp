@@ -1,16 +1,19 @@
+// AddItemScreen.js
 import React, { useState } from 'react';
-import { View, TextInput,Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
 
 const AddItemScreen = ({ onAddItem }) => {
   const navigation = useNavigation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
 
   const handleAddItem = () => {
     // Basic input validation
-    if (name.trim() === '' || description.trim() === '') {
-      alert('Please enter both name and description.');
+    if (!name || !description) {
+      setError('Please enter both name and description.');
       return;
     }
 
@@ -24,26 +27,15 @@ const AddItemScreen = ({ onAddItem }) => {
     setName('');
     setDescription('');
 
+    // Clear the error message
+    setError('');
+
     // Navigate back to the list screen
     navigation.goBack();
-    //navigation.navigate('List');
   };
-  const handleGoBack = () => {
-    // Navigate back to the list screen
-    navigation.goBack();
-  }
 
   return (
-   
-     
-    
-
-
     <View style={styles.container}>
-        <TouchableOpacity onPress={handleGoBack}>
-        <Text style={styles.backButton}>Go Back</Text>
-      </TouchableOpacity>
-
       <TextInput
         style={styles.input}
         placeholder="Name"
@@ -56,13 +48,14 @@ const AddItemScreen = ({ onAddItem }) => {
         value={description}
         onChangeText={setDescription}
       />
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <Button title="Add Item" onPress={handleAddItem} />
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text style={styles.goBackButton}>Go Back</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-AddItemScreen.navigationOptions = {
-    headerShown: true,
-  };
 
 const styles = StyleSheet.create({
   container: {
@@ -75,6 +68,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingLeft: 8,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
+  goBackButton: {
+    color: 'blue',
+    marginTop: 10,
   },
 });
 

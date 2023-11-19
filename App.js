@@ -1,7 +1,8 @@
 // App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ListScreen from './src/ListScreen';
 import AddItemScreen from './src/AddItemScreen';
 
@@ -10,25 +11,59 @@ const Tab = createBottomTabNavigator();
 const App = () => {
   const [items, setItems] = useState([]);
 
+  // Load items from AsyncStorage when the app starts
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  // Save items to AsyncStorage whenever the items state changes
+  useEffect(() => {
+    saveItems();
+  }, [items]);
+
+  // Load items from AsyncStorage
+  const loadItems = async () => {
+    try {
+      const storedItems = await AsyncStorage.getItem('@MyApp:items');
+      if (storedItems) {
+        setItems(JSON.parse(storedItems));
+      }
+    } catch (error) {
+      console.error('Error loading items from AsyncStorage:', error);
+    }
+  };
+
+  // Save items to AsyncStorage
+  const saveItems = async () => {
+    try {
+      await AsyncStorage.setItem('@MyApp:items', JSON.stringify(items));
+    } catch (error) {
+      console.error('Error saving items to AsyncStorage:', error);
+    }
+  };
+
+  // Add new item to the list
   const addNewItem = (newItem) => {
     setItems((prevItems) => [...prevItems, newItem]);
   };
 
+  // Edit existing item in the list
+  const editItem = (editedItem) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => (item.id === editedItem.id ? editedItem : item))
+    );
+  };
+
+  // Delete item from the list
+  const deleteItem = (itemToDelete) => {
+    setItems((prevItems) => prevItems.filter((item) => item.id !== itemToDelete.id));
+  };
+
   return (
     <NavigationContainer>
-      <Tab.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: '#001F3F', // Set the background color to dark blue
-        },
-        headerTintColor: '#fff', // Set the text color to white
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-      }}
-      >
+      <Tab.Navigator>
         <Tab.Screen name="List">
-          {() => <ListScreen items={items} />}
+          {() => <ListScreen items={items} onEditItem={editItem} onDeleteItem={deleteItem} />}
         </Tab.Screen>
         <Tab.Screen name="Add">
           {() => <AddItemScreen onAddItem={addNewItem} />}
