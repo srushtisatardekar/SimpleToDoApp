@@ -5,11 +5,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ListScreen from './src/ListScreen';
 import AddItemScreen from './src/AddItemScreen';
+import { createStackNavigator } from '@react-navigation/stack';
+import EditItemScreen from './src/EditItemScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
 
 const App = () => {
   const [items, setItems] = useState([]);
+
+  
 
   // Load items from AsyncStorage when the app starts
   useEffect(() => {
@@ -63,7 +69,14 @@ const App = () => {
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen name="List">
-          {() => <ListScreen items={items} onEditItem={editItem} onDeleteItem={deleteItem} />}
+          {() => (
+            <Stack.Navigator initialRouteName="List">
+              <Stack.Screen name="List">
+                {(props) => <ListScreen {...props} items={items} onEditItem={editItem} onDeleteItem={deleteItem} />}
+              </Stack.Screen>
+              <Stack.Screen name="Edit" component={EditItemScreen} />
+            </Stack.Navigator>
+          )}
         </Tab.Screen>
         <Tab.Screen name="Add">
           {() => <AddItemScreen onAddItem={addNewItem} />}
@@ -71,6 +84,7 @@ const App = () => {
       </Tab.Navigator>
     </NavigationContainer>
   );
+
 };
 
 export default App;

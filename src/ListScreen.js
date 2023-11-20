@@ -3,9 +3,11 @@ import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 
-const ListScreen = ({ items, onEditItem, onDeleteItem }) => {
+const ListScreen = ({ items, navigation, onDeleteItem }) => {
   const handleEditItem = (item) => {
-    onEditItem(item);
+    navigation.navigate('Edit', { item, onSaveChanges: handleSaveChanges });
+
+    
   };
 
   const handleDeleteItem = (item) => {
@@ -24,6 +26,14 @@ const ListScreen = ({ items, onEditItem, onDeleteItem }) => {
       ],
       { cancelable: false }
     );
+  };
+  const handleSaveChanges = (editedItem) => {
+    // Implement logic to save changes to the item
+    // For simplicity, update the item directly in the items list
+    const updatedItems = items.map((item) =>
+      item.id === editedItem.id ? editedItem : item
+    );
+    console.log(updatedItems);
   };
 
   return (
