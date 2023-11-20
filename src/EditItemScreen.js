@@ -9,7 +9,11 @@ const EditItemScreen = ({ route, navigation }) => {
     // Implement logic to save changes to the item
     // You can call a function to save changes to the item, for example: onSaveChanges(editedItem);
     // For simplicity, update the item directly
-    navigation.navigate('List'); // Navigate back to the list screen
+    //navigation.navigate('List'); // Navigate back to the list screen
+    navigation.options?.onSaveChanges(editedItem);
+
+    // Navigate back to the list screen
+    navigation.goBack();
   };
 
   return (

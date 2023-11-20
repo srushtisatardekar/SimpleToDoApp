@@ -68,7 +68,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name="List">
+        <Tab.Screen name="ListApp">
           {() => (
             <Stack.Navigator initialRouteName="List">
               <Stack.Screen name="List">

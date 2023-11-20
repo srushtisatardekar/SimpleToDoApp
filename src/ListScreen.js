@@ -34,6 +34,9 @@ const ListScreen = ({ items, navigation, onDeleteItem }) => {
       item.id === editedItem.id ? editedItem : item
     );
     console.log(updatedItems);
+    navigation.setOptions({
+      onSaveChanges: handleSaveChanges,
+    });
   };
 
   return (
